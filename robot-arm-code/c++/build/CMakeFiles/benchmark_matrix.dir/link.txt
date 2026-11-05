@@ -1,1 +1,0 @@
-/usr/bin/g++ -g CMakeFiles/benchmark_matrix.dir/bench/benchmark_matrix.cpp.o -o benchmark_matrix 
