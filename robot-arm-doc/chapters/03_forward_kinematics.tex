@@ -1,0 +1,314 @@
+\chapter{Forward Kinematics}
+\label{ch:fk}
+
+\section{2R}
+\label{sec:2R}
+
+% =====================================================================
+%  Forward kinematics: a more generalizable approach
+%  Goes into chapters/03_forward_kinematics.tex
+%  Requires: tikz libraries calc, angles, quotes (already in preamble)
+% =====================================================================
+
+% --- Sketch helpers --------------------------------------------------
+% Coordinate frame (drawn in colour so that an axis lying along a link
+% stays visible): y-axis (horizontal) and z-axis (vertical),
+% rotated as a whole with  \pic[rotate=<angle>] at (<point>) {axes};
+\tikzset{
+  axes/.pic={
+    \draw[-{Stealth[length=4pt]}, semithick, blue!70!black]
+      (0,0) -- (0.7,0);
+    \draw[-{Stealth[length=4pt]}, semithick, blue!70!black]
+      (0,0) -- (0,0.7);
+  },
+  fksketch/.style={scale=1.1, thick, baseline=(current bounding box.center)},
+}
+% Geometry used in all sketches (illustrative values only):
+% R_1 = 2, R_2 = 1.6, varphi_1 = 35 deg, varphi_2 = 40 deg.
+\newcommand{\fkpoints}{%
+  \coordinate (O) at (0,0);
+  \coordinate (J) at (125:2);                 % joint 2, end of link 1
+  \coordinate (E) at ($(J)+(165:1.6)$);       % end of link 2
+}
+
+% Variable definitions added during transcription -- please check.
+The arm is treated in the plane of its two links, with $y$ the horizontal
+and $z$ the vertical coordinate. $R_1$ and $R_2$ are the lengths of the
+first and second link, $\varphi_1$ and $\varphi_2$ are the joint angles,
+and positions are written as $(1, y, z)\T$, so that translations can be
+expressed as matrix products as well. The primes on $\vect{r}_2$ indicate
+the basis in which it is expressed. 
+
+\begin{center}
+\begin{tikzpicture}[fksketch]
+  \fkpoints
+  \draw (-3.2,0) -- (1,0);
+  \draw (O) -- (J) -- (E);
+  \node at (E) {$\times$};
+  \pic at (O) {axes};
+  \pic[rotate=35] at (J) {axes};
+\end{tikzpicture}
+\end{center}
+
+First determine the position $\vect{r}_2$ in the basis attached to the
+second link:
+
+\noindent
+\begin{minipage}{0.35\textwidth}
+  \centering
+  \begin{tikzpicture}[fksketch]
+    \fkpoints
+    \draw (J) -- (E);
+    \node at (E) {$\times$};
+    \pic[rotate=75] at (J) {axes};
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{0.6\textwidth}
+  \[
+    \vect{r}_2^{\prime\prime\prime} =
+    \begin{pmatrix} 1 \\ 0 \\ R_2 \end{pmatrix}
+  \]
+\end{minipage}
+
+\medskip
+
+Change basis to the basis where the z axis aligns with the next link. 
+
+\noindent
+\begin{minipage}{0.35\textwidth}
+  \centering
+  \begin{tikzpicture}[fksketch]
+    \fkpoints
+    \draw[dashed, thin] (J) -- ($(J)+(125:1)$) coordinate (Z2);
+    \draw (J) -- (E);
+    \node at (E) {$\times$};
+    \pic[rotate=35] at (J) {axes};
+    \pic[draw, thin, "$\varphi_2$", angle radius=14pt,
+         angle eccentricity=1.7] {angle = Z2--J--E};
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{0.6\textwidth}
+  \[
+    \vect{r}_2^{\prime\prime} =
+    \begin{pmatrix}
+      1 & 0 & 0 \\
+      0 & \cos\varphi_2 & -\sin\varphi_2 \\
+      0 & \sin\varphi_2 & \cos\varphi_2
+    \end{pmatrix}
+    \begin{pmatrix} 1 \\ 0 \\ R_2 \end{pmatrix}
+    =
+    \begin{pmatrix} 1 \\ -R_2\sin\varphi_2 \\ R_2\cos\varphi_2 \end{pmatrix}
+  \]
+\end{minipage}
+
+\medskip
+Change basis to the basis that is still aligned with the link but sits at the bottom joint.
+This makes the base change a mere translation.
+
+\noindent
+\begin{minipage}{0.35\textwidth}
+  \centering
+  \begin{tikzpicture}[fksketch]
+    \fkpoints
+    \draw (-3.2,0) -- (1,0);
+    \draw (O) -- (J) -- (E);
+    \fill (J) circle (1.5pt);
+    \node at (E) {$\times$};
+    \pic[rotate=35] at (O) {axes};
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{0.6\textwidth}
+  \[
+    \vect{r}_2^{\prime} =
+    \begin{pmatrix}
+      1   & 0 & 0 \\
+      0   & 1 & 0 \\
+      R_1 & 0 & 1
+    \end{pmatrix}
+    \vect{r}_2^{\prime\prime}
+    =
+    \begin{pmatrix} 1 \\ -R_2\sin\varphi_2 \\ R_2\cos\varphi_2 + R_1 \end{pmatrix}
+  \]
+\end{minipage}
+
+\medskip
+Change basis to standard y-z basis with origin at base joint.
+
+\noindent
+\begin{minipage}{0.35\textwidth}
+  \centering
+  \begin{tikzpicture}[fksketch]
+    \fkpoints
+    \draw (-3.2,0) -- (1,0);
+    \coordinate (Z0) at (0,1);
+    \draw (O) -- (J) -- (E);
+    \node at (E) {$\times$};
+    \pic at (O) {axes};
+    \pic[draw, thin, "$\varphi_1$", angle radius=16pt,
+         angle eccentricity=1.6] {angle = Z0--O--J};
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{0.6\textwidth}
+  \[
+    \vect{r}_2 =
+    \begin{pmatrix}
+      1 & 0 & 0 \\
+      0 & \cos\varphi_1 & -\sin\varphi_1 \\
+      0 & \sin\varphi_1 & \cos\varphi_1
+    \end{pmatrix}
+    \vect{r}_2^{\prime}
+  \]
+\end{minipage}
+
+\begin{align*}
+  \vect{r}_2
+  &= \begin{pmatrix}
+       1 \\
+       -R_2\cos\varphi_1\sin\varphi_2 - R_2\cos\varphi_2\sin\varphi_1
+         - R_1\sin\varphi_1 \\
+       -R_2\sin\varphi_1\sin\varphi_2 + R_2\cos\varphi_1\cos\varphi_2
+         + R_1\cos\varphi_1
+     \end{pmatrix} \\
+  &= \begin{pmatrix}
+       1 \\
+       -R_1\sin\varphi_1 - R_2\sin(\varphi_1 + \varphi_2) \\
+       R_1\cos\varphi_1 + R_2\cos(\varphi_1 + \varphi_2)
+     \end{pmatrix}
+\end{align*}
+
+The entire transformation:
+\[
+  \vect{r}_2 =
+  \begin{pmatrix}
+    1 & 0 & 0 \\
+    0 & \cos\varphi_1 & -\sin\varphi_1 \\
+    0 & \sin\varphi_1 & \cos\varphi_1
+  \end{pmatrix}
+  \begin{pmatrix}
+    1   & 0 & 0 \\
+    0   & 1 & 0 \\
+    R_1 & 0 & 1
+  \end{pmatrix}
+  \begin{pmatrix}
+    1 & 0 & 0 \\
+    0 & \cos\varphi_2 & -\sin\varphi_2 \\
+    0 & \sin\varphi_2 & \cos\varphi_2
+  \end{pmatrix}
+  \vect{r}_2^{\prime\prime\prime}
+\]
+
+% =====================================================================
+%  chapters/03_forward_kinematics.tex -- 4R arm
+%  Goes after the section "A more generalizable approach".
+%  Requires: tikz (calc, angles, quotes, arrows.meta), subcaption
+% =====================================================================
+
+\section{Forward kinematics: 4R arm}
+\label{sec:4r-fk}
+
+The arm consists of a base that rotates about the vertical $z$-axis by
+the angle $\varphi_0$, followed by three links of lengths $R_1$, $R_2$
+and $R_3$ with joint angles $\varphi_1$, $\varphi_2$ and $\varphi_3$
+acting in a vertical plane. The first joint sits at height $h$ above the
+ground, and $D_0$, $D_1$ and $D_2$ are fixed lateral offsets between the
+joints. All joint angles are signed, with counterclockwise positive;
+angles drawn in the sketches are unsigned magnitudes. Positions are
+written in homogeneous coordinates $(1, x, y, z)\T$.
+
+
+\Cref{fig:4r-structure} shows the assumed general structure, with
+$\varphi_0 = 0$ in the top view.
+
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}[b]{0.5\textwidth}
+    \centering
+    \begin{tikzpicture}[thick, scale=1.2]
+      \draw[-{Stealth[length=4pt]}, semithick] (-1.2,2.6) -- (-0.7,2.6) node[right] {$x$};
+      \draw[-{Stealth[length=4pt]}, semithick] (-1.2,2.6) -- (-1.2,3.1) node[above] {$z$};
+      \draw (-1,0) -- (3.4,0);
+      \draw (-0.4,0) rectangle (0.4,0.4);
+      \draw[|<->|, thin] (-0.7,0) -- node[left] {$h$} (-0.7,0.4);
+      \coordinate (S) at (0,0.4);
+      \coordinate (E) at ($(S)+(65:2)$);
+      \coordinate (W) at ($(E)+(15:1.6)$);
+      \coordinate (T) at ($(W)+(-40:0.9)$);
+      \coordinate (U) at ($(S)+(0,1)$);
+      \coordinate (X1) at ($(E)+(65:0.8)$);
+      \coordinate (X2) at ($(W)+(15:0.7)$);
+      \draw[dashed, thin] (S) -- (U);
+      \draw[dashed, thin] (E) -- (X1);
+      \draw[dashed, thin] (W) -- (X2);
+      \draw (S) -- node[right, pos=0.55] {$R_1$} (E)
+                -- node[below] {$R_2$} (W)
+                -- node[below left] {$R_3$} (T);
+      \foreach \p in {S,E,W} \fill (\p) circle (1.3pt);
+      \node at (T) {$\times$};
+      \pic[draw, thin, "$\varphi_1$", angle radius=16pt, angle eccentricity=1.5]
+        {angle = E--S--U};
+      \pic[draw, thin, "$\varphi_2$", angle radius=14pt, angle eccentricity=1.6]
+        {angle = W--E--X1};
+      \pic[draw, thin, "$\varphi_3$", angle radius=12pt, angle eccentricity=1.7]
+        {angle = T--W--X2};
+    \end{tikzpicture}
+    \caption{Side view.}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.46\textwidth}
+    \centering
+    \begin{tikzpicture}[thick, scale=1.1]
+      \draw[-{Stealth[length=4pt]}, semithick] (-0.6,1.6) -- (-0.1,1.6) node[right] {$x$};
+      \draw[-{Stealth[length=4pt]}, semithick] (-0.6,1.6) -- (-0.6,2.1) node[above] {$y$};
+      \draw[thin] (0,0) circle (0.3);
+      \fill (0,0) circle (1.3pt);
+      \draw[dashed, thin] (0,0) -- (3.6,0);
+      \draw (0,0) -- (0,0.35) -- (1,0.35) -- (1,0.7) -- (2,0.7) -- (2,1.05) -- (2.9,1.05);
+      \node at (2.9,1.05) {$\times$};
+      \draw[|<->|, thin] (-0.45,0) -- node[left] {$D_0$} (-0.45,0.35);
+      \draw[|<->|, thin] (0.75,0.35) -- node[left] {$D_1$} (0.75,0.7);
+      \draw[|<->|, thin] (1.75,0.7) -- node[left] {$D_2$} (1.75,1.05);
+      \draw[dotted, thin] (0,0) -- (2.9,1.05) coordinate (Tt);
+      \coordinate (O) at (0,0); \coordinate (Xa) at (3.6,0);
+      \pic[draw, thin, "$\delta\varphi_0$", angle radius=70pt, angle eccentricity=1.3]
+        {angle = Xa--O--Tt};
+    \end{tikzpicture}
+    \caption{Top view, $\varphi_0 = 0$.}
+  \end{subfigure}
+  \caption{Assumed general structure of the 4R arm.}
+  \label{fig:4r-structure}
+\end{figure}
+
+Again we work our way slowly with basis transformations, from the trivial
+description of the position $\vect{r}'$ of the end effector to the
+description $\vect{r}$ in the general basis:
+\begin{align*}
+  \vect{r} =\;
+  &\begin{pmatrix}
+     1 & 0 & 0 & 0 \\
+     0 & \cos\varphi_0 & -\sin\varphi_0 & 0 \\
+     0 & \sin\varphi_0 & \cos\varphi_0 & 0 \\
+     0 & 0 & 0 & 1
+   \end{pmatrix}
+   \begin{pmatrix}
+     1 & 0 & 0 & 0 \\
+     0 & \cos\varphi_1 & 0 & -\sin\varphi_1 \\
+     D_0 & 0 & 1 & 0 \\
+     h & \sin\varphi_1 & 0 & \cos\varphi_1
+   \end{pmatrix} \\
+  &\begin{pmatrix}
+     1 & 0 & 0 & 0 \\
+     0 & \cos\varphi_2 & 0 & -\sin\varphi_2 \\
+     D_1 & 0 & 1 & 0 \\
+     R_1 & \sin\varphi_2 & 0 & \cos\varphi_2
+   \end{pmatrix}
+   \begin{pmatrix}
+     1 & 0 & 0 & 0 \\
+     0 & \cos\varphi_3 & 0 & -\sin\varphi_3 \\
+     D_2 & 0 & 1 & 0 \\
+     R_2 & \sin\varphi_3 & 0 & \cos\varphi_3
+   \end{pmatrix}
+   \vect{r}'
+\end{align*}
+with
+\[
+  \vect{r}' = \begin{pmatrix} 1 \\ 0 \\ 0 \\ R_3 \end{pmatrix} .
+\]

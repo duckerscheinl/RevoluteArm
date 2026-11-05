@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/benchmark_norm1.dir/bench/benchmark_norm1.cpp.o -o benchmark_norm1 

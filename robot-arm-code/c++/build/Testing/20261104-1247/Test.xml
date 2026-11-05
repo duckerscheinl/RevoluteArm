@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20261104-1247-Experimental"
+	Name="(empty)"
+	Generator="ctest-3.28.3"
+	CompilerName=""
+	CompilerVersion=""
+	OSName="Linux"
+	Hostname="DelphisOracle"
+	OSRelease="7.0.0-42-generic"
+	OSVersion="#42~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct 19 14:43:01 UTC 2"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="165"
+	ProcessorCacheSize="12288"
+	NumberOfLogicalCPU="12"
+	NumberOfPhysicalCPU="6"
+	TotalVirtualMemory="4095"
+	TotalPhysicalMemory="15853"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="4262.29"
+	>
+	<Testing>
+		<StartDateTime>Nov 04 20:55 CET</StartDateTime>
+		<StartTestTime>1793822143</StartTestTime>
+		<TestList/>
+		<EndDateTime>Nov 04 20:55 CET</EndDateTime>
+		<EndTestTime>1793822143</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>

@@ -1,0 +1,50 @@
+[
+{
+  "directory": "/home/lucas/Projects/Robotics/robot-arm-code/c++/build",
+  "command": "/usr/bin/g++  -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/linalg/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/linalg/io/include -g -std=gnu++23 -Wall -Wextra -Wdouble-promotion -g -fsanitize=address,undefined -o CMakeFiles/test_matrix.dir/tests/test_matrix.cpp.o -c /home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_matrix.cpp",
+  "file": "/home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_matrix.cpp",
+  "output": "CMakeFiles/test_matrix.dir/tests/test_matrix.cpp.o"
+},
+{
+  "directory": "/home/lucas/Projects/Robotics/robot-arm-code/c++/build",
+  "command": "/usr/bin/g++  -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/kinematics/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/geometry/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/linalg/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/utils/include -g -std=gnu++23 -Wall -Wextra -Wdouble-promotion -g -fsanitize=address,undefined -o CMakeFiles/test_planar.dir/tests/test_planar.cpp.o -c /home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_planar.cpp",
+  "file": "/home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_planar.cpp",
+  "output": "CMakeFiles/test_planar.dir/tests/test_planar.cpp.o"
+},
+{
+  "directory": "/home/lucas/Projects/Robotics/robot-arm-code/c++/build",
+  "command": "/usr/bin/g++  -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/kinematics/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/geometry/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/linalg/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/utils/include -g -std=gnu++23 -Wall -Wextra -Wdouble-promotion -g -fsanitize=address,undefined -o CMakeFiles/test_arm.dir/tests/test_arm.cpp.o -c /home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_arm.cpp",
+  "file": "/home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_arm.cpp",
+  "output": "CMakeFiles/test_arm.dir/tests/test_arm.cpp.o"
+},
+{
+  "directory": "/home/lucas/Projects/Robotics/robot-arm-code/c++/build",
+  "command": "/usr/bin/g++  -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/kinematics/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/geometry/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/linalg/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/utils/include -g -std=gnu++23 -Wall -Wextra -Wdouble-promotion -g -fsanitize=address,undefined -o CMakeFiles/test_forward_consistency.dir/tests/test_forward_consistency.cpp.o -c /home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_forward_consistency.cpp",
+  "file": "/home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_forward_consistency.cpp",
+  "output": "CMakeFiles/test_forward_consistency.dir/tests/test_forward_consistency.cpp.o"
+},
+{
+  "directory": "/home/lucas/Projects/Robotics/robot-arm-code/c++/build",
+  "command": "/usr/bin/g++  -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/kinematics/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/geometry/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/linalg/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/utils/include -g -std=gnu++23 -Wall -Wextra -Wdouble-promotion -g -fsanitize=address,undefined -o CMakeFiles/test_base_3planar.dir/tests/test_base+3planar.cpp.o -c /home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_base+3planar.cpp",
+  "file": "/home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_base+3planar.cpp",
+  "output": "CMakeFiles/test_base_3planar.dir/tests/test_base+3planar.cpp.o"
+},
+{
+  "directory": "/home/lucas/Projects/Robotics/robot-arm-code/c++/build",
+  "command": "/usr/bin/g++  -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/kinematics/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/geometry/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/linalg/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/utils/include -g -std=gnu++23 -Wall -Wextra -Wdouble-promotion -g -fsanitize=address,undefined -o CMakeFiles/test_base_3planar_roll.dir/tests/test_base+3planar+roll.cpp.o -c /home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_base+3planar+roll.cpp",
+  "file": "/home/lucas/Projects/Robotics/robot-arm-code/c++/tests/test_base+3planar+roll.cpp",
+  "output": "CMakeFiles/test_base_3planar_roll.dir/tests/test_base+3planar+roll.cpp.o"
+},
+{
+  "directory": "/home/lucas/Projects/Robotics/robot-arm-code/c++/build",
+  "command": "/usr/bin/g++  -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/kinematics/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/geometry/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/linalg/include -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/utils/include -g -std=gnu++23 -Wall -Wextra -Wdouble-promotion -o CMakeFiles/benchmark_planar.dir/bench/benchmark_planar.cpp.o -c /home/lucas/Projects/Robotics/robot-arm-code/c++/bench/benchmark_planar.cpp",
+  "file": "/home/lucas/Projects/Robotics/robot-arm-code/c++/bench/benchmark_planar.cpp",
+  "output": "CMakeFiles/benchmark_planar.dir/bench/benchmark_planar.cpp.o"
+},
+{
+  "directory": "/home/lucas/Projects/Robotics/robot-arm-code/c++/build",
+  "command": "/usr/bin/g++  -I/home/lucas/Projects/Robotics/robot-arm-code/c++/libs/linalg/include -g -std=gnu++23 -Wall -Wextra -Wdouble-promotion -o CMakeFiles/benchmark_norm1.dir/bench/benchmark_norm1.cpp.o -c /home/lucas/Projects/Robotics/robot-arm-code/c++/bench/benchmark_norm1.cpp",
+  "file": "/home/lucas/Projects/Robotics/robot-arm-code/c++/bench/benchmark_norm1.cpp",
+  "output": "CMakeFiles/benchmark_norm1.dir/bench/benchmark_norm1.cpp.o"
+}
+]

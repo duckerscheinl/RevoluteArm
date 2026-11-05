@@ -1,0 +1,65 @@
+% =====================================================================
+%  preamble.tex -- packages and layout
+% =====================================================================
+
+% --- Encoding & language ---------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman, english]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% --- Layout ----------------------------------------------------------
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{parskip}
+
+% --- Mathematics -----------------------------------------------------
+\usepackage{amsmath, amssymb, mathtools}
+\usepackage{bm}
+\usepackage{amsthm}
+
+\newtheorem{lemma}{Lemma}[chapter]
+
+% --- Units -----------------------------------------------------------
+\usepackage{siunitx}
+\sisetup{per-mode=symbol, range-phrase=\,--\,}
+
+% --- Figures & tables ------------------------------------------------
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+% --- Diagrams (frames, links, joint sketches) ------------------------
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, positioning, 3d, angles, quotes, patterns, babel}
+% --- Source code (C++ / ESP32 firmware) ------------------------------
+\usepackage{xcolor}
+\usepackage{listings}
+\lstdefinestyle{cpp}{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!70!black}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{red!60!black},
+  numbers=left, numberstyle=\tiny\color{gray},
+  frame=single, breaklines=true, tabsize=4,
+  showstringspaces=false, captionpos=b
+}
+\lstset{style=cpp}
+
+% --- Algorithms (IK iterations, trajectory generation) ---------------
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% --- Bibliography ----------------------------------------------------
+\usepackage{csquotes}
+\usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
+
+% --- Cross-references (load last) ------------------------------------
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink]{cleveref}
+
+\crefname{lemma}{lemma}{lemmas}

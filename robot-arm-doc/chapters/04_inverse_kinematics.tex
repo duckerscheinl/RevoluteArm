@@ -1,0 +1,467 @@
+\chapter{Inverse Kinematics}
+\label{ch:ik}
+
+% =====================================================================
+%  Inverse kinematics: 2R planar
+%  Goes into chapters/04_inverse_kinematics.tex
+%  Requires: tikz (calc, angles, quotes), subcaption, siunitx, cleveref
+%  References \cref{lem:triangle-laws} from the prerequisites.
+% =====================================================================
+
+\section{Inverse kinematics: 2R}
+\label{sec:ik-2r-planar}
+
+\begin{figure}[tbp]
+  \centering
+  % Illustrative geometry shared by both sketches
+  \pgfmathsetmacro{\Ra}{2}       % R_1
+  \pgfmathsetmacro{\Rb}{1.6}     % R_2
+  \pgfmathsetmacro{\dT}{3}       % distance base--target
+  \pgfmathsetmacro{\th}{45}      % theta
+  \pgfmathsetmacro{\al}{acos((\Ra^2+\dT^2-\Rb^2)/(2*\Ra*\dT))} % alpha
+  %
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=1.4, thick]
+      \coordinate (O)  at (0,0);
+      \coordinate (Y)  at (1,0);
+      \coordinate (Z0) at (0,1);
+      \coordinate (T)  at (\th:\dT);
+      \coordinate (J)  at (\th+\al:\Ra);
+      \coordinate (X)  at ($(O)!1.45!(J)$);    % extension of link 1
+      % ground, helper lines
+      \draw (-0.8,0) -- (3,0);
+      \draw[dashed, thin] (O) -- (0,2.4);
+      \draw[dashed, thin] (J) -- (X);
+      \draw[dashed, thin] (O) -- (T);
+      % links
+      \draw (O) -- node[left=3pt, pos=0.35] {$R_1$} (J);
+      \draw (J) -- node[above, pos=0.7] {$R_2$} (T);
+      \fill (J) circle (1.5pt);
+      \node at (T) {$\times$};
+      \node[right] at (T) {$\vect{t}$};
+      % angles at the base
+      \pic[draw, thin, "$\theta$", angle radius=14pt, angle eccentricity=1.45]
+        {angle = Y--O--T};
+      \pic[draw, thin, "$\alpha$", angle radius=26pt, angle eccentricity=1.3]
+        {angle = T--O--J};
+      \pic[draw, thin, "$\varphi_1$", angle radius=50pt, angle eccentricity=1.2]
+        {angle = J--O--Z0};
+      % angles at the elbow and the target
+      \pic[draw, thin, "$\beta$", angle radius=10pt, angle eccentricity=1.8]
+        {angle = O--J--T};
+      \pic[draw, thin, "$\varphi_2$", angle radius=14pt, angle eccentricity=1.6]
+        {angle = T--J--X};
+      \pic[draw, thin, "$\gamma$", angle radius=14pt, angle eccentricity=1.6]
+        {angle = J--T--O};
+    \end{tikzpicture}
+    \caption{Configuration 1 with all angles.}
+    \label{fig:ik-2r-angles}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=1.15, thick]
+      \coordinate (O)  at (0,0);
+      \coordinate (T)  at (\th:\dT);
+      \coordinate (J1) at (\th+\al:\Ra);
+      \coordinate (J2) at (\th-\al:\Ra);
+      % circles whose intersections are the possible elbow positions
+      \draw[thin, gray] (\Ra,0) arc[start angle=0, end angle=180, radius=\Ra];
+      \draw[thin, gray] (T) circle[radius=\Rb];
+      \draw (-2.2,0) -- (3.9,0);
+      \draw[dashed, thin] (O) -- (T);
+      % configuration 1 (solid) and 2 (dashed)
+      \draw (O) -- (J1) -- (T);
+      \draw[densely dashed] (O) -- (J2) -- (T);
+      \fill (J1) circle (1.5pt) node[above left]  {1};
+      \fill (J2) circle (1.5pt) node[below right] {2};
+      \node at (T) {$\times$};
+      \node[above right] at (T) {$\vect{t}$};
+    \end{tikzpicture}
+    \caption{Both configurations reaching $\vect{t}$.}
+    \label{fig:ik-2r-configs}
+  \end{subfigure}
+  \caption{Inverse kinematics of the planar 2R arm. The possible elbow
+    positions are the intersections of the circle of radius $R_1$ about
+    the base with the circle of radius $R_2$ about the target.}
+  \label{fig:ik-2r}
+\end{figure}
+
+\enquote{Here the second configuration does not exist}
+
+% Added during transcription -- please check.
+As shown in \cref{fig:ik-2r-angles}, $\alpha$, $\beta$ and $\gamma$ are the
+interior angles at the base, the elbow and the target of the triangle
+formed by the two links and the line from the base to the target, and
+$\theta$ is the angle between the ground and that line.
+
+$\alpha$, $\beta$ and $\gamma$ can be determined via the laws of sine and
+cosine. Of course, we only need $\alpha$ and $\beta$:
+\begin{align*}
+  \alpha &= \arctan\left(\frac{\sin(\alpha)}{\cos(\alpha)}\right), \\
+  \beta  &= \arctan\left(\frac{\sin(\beta)}{\cos(\beta)}\right),
+\end{align*}
+where we find $\sin(\alpha)$ and $\cos(\alpha)$ via
+\cref{lem:triangle-laws}. $\theta$ we can find directly via
+\[
+  \theta = \arctan\left(\frac{t_2}{t_1}\right)
+\]
+with the target $\vect{t} = (t_1, t_2)\T$.
+
+Now we have all the ingredients we need to find $\varphi_1$ and
+$\varphi_2$ for both configurations:
+\begin{enumerate}
+  \item $\varphi_1 = \theta + \alpha - \ang{90}$ \quad and \quad
+        $\varphi_2 = -\ang{180} + \beta$,
+  \item $\varphi_1 = \theta - \alpha - \ang{90}$ \quad and \quad
+        $\varphi_2 = \ang{180} - \beta$.
+\end{enumerate}
+
+\paragraph{Hint.}
+Most libraries offer an \texttt{atan2}, which resolves all four quadrants.
+
+\paragraph{Reachability.}
+We assume $R_1 > R_2$. Then a target $\vect{t} = (t_1, t_2)\T$ is only
+reachable if
+\[
+  R_1 - R_2 \le \lvert \vect{t} \rvert \le R_1 + R_2 ,
+\]
+where the equals disappears in practice: on the boundary the arm is
+either fully stretched or fully folded, both configurations coincide,
+and small errors in the link lengths or rounding in the computation
+already push the target out of reach.
+
+% =====================================================================
+%  chapters/04_inverse_kinematics.tex -- 4R arm and 5R extension
+%  Goes after the section "Inverse kinematics: 2R planar".
+%  Requires: tikz (calc, angles, quotes, arrows.meta), subcaption
+% =====================================================================
+
+\section{Inverse kinematics: 4R arm}
+\label{sec:4r-ik}
+
+The arm and its variables are introduced in \cref{sec:4r-fk}.
+
+\paragraph{Base angle $\varphi_0$.}
+The angle of the $x$-$y$-position of the target
+$\vect{t} = (1, t_1, t_2, t_3)\T$ we can compute directly:
+\[
+  \varphi_0' = \arctan\left(\frac{t_2}{t_1}\right) .
+\]
+But we need to correct this angle by $\delta\varphi_0$, the angle between
+the arm's $x'$-axis and the direction to the target (see
+\cref{fig:4r-structure}). To compute $\delta\varphi_0$ we need the
+$x$-$y$-length of the arm:
+\[
+  \delta\varphi_0 = \arcsin\left(\frac{D}{\sqrt{t_1^2 + t_2^2}}\right)
+  \qquad\text{with } D = D_0 + D_1 + D_2 .
+\]
+$\delta\varphi_0 \in [0, \frac{\pi}{2})$, so $\arcsin$ already gives the
+unique answer. It also introduces an additional reachability condition:
+\[
+  D \le \sqrt{t_1^2 + t_2^2} .
+\]
+
+\paragraph{Two configurations for the base angle.}
+As long as the joint angles allow it, one can always create a
+configuration in which the $D_i$ all point in the positive direction and
+one in which they all point in the negative direction
+(\cref{fig:4r-base-configs}). For a given target this means that two
+configurations are possible. One of them requires the base angle
+\begin{equation}
+  \boxed{\varphi_0^{(1)} = \varphi_0' - \delta\varphi_0} ,
+  \label{eq:4r-phi0-1}
+\end{equation}
+where $\varphi_0'$ is the angle of the target and $\delta\varphi_0$
+describes the angle of the arm configuration. The other first requires a
+rotation by $\pi$, followed by an inversion of all planar joint angles,
+$\varphi_i \to -\varphi_i$ for $i = 1, 2, 3$. Afterwards, as \cref{fig:4r-base-configs} shows, we have to rotate by
+$\delta\varphi_0$ further: $\varphi_0^{(2)} = \pi + \varphi_0' +
+\delta\varphi_0$. Since this number is greater than $\pi$,
+\begin{equation}
+  \boxed{\varphi_0^{(2)} = \varphi_0' - \pi + \delta\varphi_0} .
+  \label{eq:4r-phi0-2}
+\end{equation}
+
+\begin{figure}[tbp]
+  \centering
+  % Same target t = (3, 0), D = 1.2 (exaggerated); delta phi_0 = asin(0.4).
+  \begin{tikzpicture}[thick, scale=1.5]
+    \pgfmathsetmacro{\dl}{asin(0.4)}
+    \draw[-{Stealth[length=4pt]}, semithick] (-1.4,1.2) -- (-0.9,1.2) node[right] {$x$};
+    \draw[-{Stealth[length=4pt]}, semithick] (-1.4,1.2) -- (-1.4,1.7) node[above] {$y$};
+    \draw[thin] (0,0) circle (0.3);
+    \fill (0,0) circle (1.3pt);
+    \draw[dotted, thin] (0,0) -- (3,0);
+    % configuration 1: phi_0 = -delta, offsets along +y'
+    \begin{scope}[rotate=-\dl]
+      \draw (0,0) -- (0,0.4) -- (1,0.4) -- (1,0.8) -- (2,0.8) -- (2,1.2) -- (2.75,1.2);
+      \draw[-{Stealth[length=4pt]}, gray, semithick] (0,0) -- (0.9,0)
+        node[pos=1, below, black] {$x'^{(1)}$};
+      \node[above, font=\small] at (1.5,0.8) {1};
+    \end{scope}
+    % configuration 2: phi_0 = -pi + delta, links reach along -x'
+    \begin{scope}[rotate=180+\dl]
+      \draw[densely dashed] (0,0) -- (0,0.4) -- (-1,0.4) -- (-1,0.8) -- (-2,0.8)
+        -- (-2,1.2) -- (-2.75,1.2);
+      \draw[-{Stealth[length=4pt]}, gray, semithick] (0,0) -- (0.9,0)
+        node[pos=1, below, black] {$x'^{(2)}$};
+      \node[below, font=\small] at (-1.5,0.8) {2};
+    \end{scope}
+    \node at (3,0) {$\times$};
+    \node[right] at (3,0) {$\vect{t}$};
+  \end{tikzpicture}
+  \caption{Top view of the two base configurations reaching the same
+    target: configuration 1 (solid) and configuration 2 (dashed), whose
+    $x'$-axis points away from the links.}
+  \label{fig:4r-base-configs}
+\end{figure}
+
+\paragraph{Reduction to a plane.}
+Once we have $\varphi_0$, we can calculate the remaining angles by only
+considering a plane, specifically the $z$-$x'$-plane, where $x'$ is the
+arm's own horizontal axis shown in \cref{fig:4r-base-configs}. Why is
+that the axis? The position in the $y'$-direction cannot be affected,
+since the $D_i$ cannot be changed. In the $x'$-direction, we get changes
+by moving the links according to the joints' degrees of freedom.
+The target position in the $x'$-$z$-plane is
+\[
+  \vect{t}'^{(1)} =
+  \begin{pmatrix} \sqrt{t_1^2 + t_2^2 - D^2} \\ t_3 \end{pmatrix} .
+\]
+In the case of the second configuration, the $x'$-axis points in the
+opposite direction of the links. Therefore we have to invert the sign of
+the $x'$-component, where $\varphi_0^{(2)}$ is not explicitly included in
+the formula:
+\[
+  \vect{t}'^{(2)} =
+  \begin{pmatrix} -\sqrt{t_1^2 + t_2^2 - D^2} \\ t_3 \end{pmatrix} .
+\]
+
+\paragraph{Wrist position in the $x'$-$z$-plane.}
+The 3R problem in the $x'^{(i)}$-$z$-plane looks identical for both
+configurations, with the only difference being that the $x'^{(2)}$-axis is
+mirrored on the $z$-axis (\cref{fig:4r-planar}).
+
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}[b]{0.56\textwidth}
+    \centering
+    \begin{tikzpicture}[thick, scale=1.2]
+      \draw (-1.4,0) -- (3.6,0);
+      \draw (-0.4,0) rectangle (0.4,0.4);
+      \draw[|<->|, thin] (0.6,0) -- node[right] {$h$} (0.6,0.4);
+      % bases of both configurations
+      \draw[-{Stealth[length=4pt]}, semithick, blue!70!black]
+        (0,0) -- (1.1,0) node[below] {$x'^{(1)}$};
+      \draw[-{Stealth[length=4pt]}, semithick, blue!70!black]
+        (0,0) -- (-1.1,0) node[below] {$x'^{(2)}$};
+      \draw[-{Stealth[length=4pt]}, semithick, blue!70!black]
+        (0,0) -- (0,1.0) node[left] {$z$};
+      \coordinate (S) at (0,0.4);
+      \coordinate (E) at ($(S)+(70:1.6)$);
+      \coordinate (W) at ($(E)+(-5:1.6)$);
+      \coordinate (T) at ($(W)+(-55:0.9)$);
+      \draw[dashed, thin] (S) -- node[below right, pos=0.6] {$\lVert\vect{p}_3''\rVert$} (W);
+      \draw (S) -- node[left, pos=0.8] {$R_1$} (E)
+                -- node[above] {$R_2$} (W)
+                -- node[right] {$R_3$} (T);
+      \foreach \p in {S,E,W} \fill (\p) circle (1.3pt);
+      \node at (T) {$\times$};
+    \end{tikzpicture}
+    \caption{The planar problem with the bases of both configurations.}
+    \label{fig:4r-planar}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.4\textwidth}
+    \centering
+    \begin{tikzpicture}[thick, scale=1.2]
+      \coordinate (O) at (0,0);
+      \coordinate (Z) at (0,1.6);
+      % v and its rotation, in basis 1 (right) and mirrored in basis 2 (left)
+      \coordinate (V1) at (72:1.2);
+      \coordinate (W1) at (32:1.2);
+      \coordinate (V2) at (108:1.2);
+      \coordinate (W2) at (148:1.2);
+      \draw[thin, gray] (1.2,0) arc[start angle=0, end angle=180, radius=1.2];
+      \draw[-{Stealth[length=4pt]}, semithick, blue!70!black]
+        (O) -- (1.6,0) node[below] {$x'^{(1)}$};
+      \draw[-{Stealth[length=4pt]}, semithick, blue!70!black]
+        (O) -- (-1.6,0) node[below] {$x'^{(2)}$};
+      \draw[-{Stealth[length=4pt]}, semithick, blue!70!black]
+        (O) -- (Z) node[left] {$z$};
+      \draw[-{Stealth[length=4pt]}] (O) -- (V1) node[above right=-2pt] {$\vect{v}^{(1)}$};
+      \draw[-{Stealth[length=4pt]}] (O) -- (W1) node[right] {$\tilde{\vect{v}}^{(1)}$};
+      \draw[-{Stealth[length=4pt]}] (O) -- (V2) node[above left=-2pt] {$\vect{v}^{(2)}$};
+      \draw[-{Stealth[length=4pt]}] (O) -- (W2) node[left] {$\tilde{\vect{v}}^{(2)}$};
+      \pic[draw, thin, {Stealth[length=3pt]}-, "$\lvert\varphi\rvert$",
+           angle radius=22pt, angle eccentricity=1.55] {angle = W1--O--V1};
+      \pic[draw, thin, -{Stealth[length=3pt]}, "$\lvert\varphi\rvert$",
+           angle radius=22pt, angle eccentricity=1.55] {angle = V2--O--W2};
+    \end{tikzpicture}
+    \caption{A vector $\vect{v}$ and its rotation $\tilde{\vect{v}}$,
+      described in the basis of configuration 1 and in the mirrored basis
+      of configuration 2.}
+    \label{fig:4r-handedness}
+  \end{subfigure}
+  \caption{The arm plane of both configurations.}
+\end{figure}
+
+Obviously, in both bases the magnitude of the angles does not change;
+however, the \enquote{handedness} of the rotation changes, as
+\cref{fig:4r-handedness} visualizes. Therefore we only need to compute
+$\varphi_1$, $\varphi_2$ and $\varphi_3$ for one case and find the angles
+for the other case by inverting the handedness:
+\begin{equation}
+  \varphi_i^{(2)} = -\varphi_i^{(1)} , \qquad i = 1, 2, 3 .
+  \label{eq:4r-config2}
+\end{equation}
+
+The target comes with an additional constraint, the angle of vertical
+approach $\theta$, where $\theta = 0$ implies approaching from straight
+above (\cref{fig:4r-approach}). With the angle of approach, one can find
+the position $\vect{p}_3'$ of the third joint:
+\[
+  \vect{p}_3'^{(1)} = \vect{t}'^{(1)}
+    + R_3 \begin{pmatrix} -\sin\theta \\ \cos\theta \end{pmatrix} .
+\]
+
+\begin{figure}[tbp]
+  \centering
+  \begin{tikzpicture}[thick, scale=1.3]
+    \draw[-{Stealth[length=4pt]}, semithick] (-1.3,1.2) -- (-0.8,1.2) node[right] {$x'$};
+    \draw[-{Stealth[length=4pt]}, semithick] (-1.3,1.2) -- (-1.3,1.7) node[above] {$z$};
+    \coordinate (T) at (0,0);
+    \coordinate (W) at (125:1.1);
+    \coordinate (U) at (0,1.3);
+    \draw[thin, gray] (T) circle (1.1);
+    \draw[dashed, thin] (T) -- (U);
+    \draw (T) -- node[below left] {$R_3$} (W);
+    \fill (W) circle (1.3pt);
+    \node at (T) {$\times$};
+    \pic[draw, thin, "$\theta$", angle radius=18pt, angle eccentricity=1.4]
+      {angle = U--T--W};
+  \end{tikzpicture}
+  \caption{Angle of approach $\theta$.}
+  \label{fig:4r-approach}
+\end{figure}
+
+\paragraph{Angles $\varphi_1$ and $\varphi_2$.}
+Now we can calculate the angles $\varphi_1$ and $\varphi_2$ the same way
+as for the 2R arm (\cref{sec:ik-2r-planar}), with $\vect{p}_3''$
+replacing $\vect{t}$ (\cref{fig:4r-planar}), where
+\[
+  \vect{p}_3'' = \vect{p}_3' - \begin{pmatrix} 0 \\ h \end{pmatrix}
+\]
+is the wrist position relative to the shoulder.
+
+\paragraph{Angle $\varphi_3$.}
+With $\Phi = \varphi_1 + \varphi_2 + \varphi_3$ the absolute angle of
+the last link (\cref{fig:4r-phi3}; the angles in the drawing are
+unsigned), we find for the first configuration
+\[
+  \Phi - \theta = \pi ,
+  \qquad
+  \varphi_3^{(1)} = \pi + \theta - \varphi_1^{(1)} - \varphi_2^{(1)} .
+\]
+For $\varphi_3 > \pi$, interpret $\varphi_3 \to \varphi_3 - 2\pi$.
+% Added during transcription -- follows from eq:4r-config2, please check.
+For the second configuration, \eqref{eq:4r-config2} gives
+\[
+  \varphi_3^{(2)} = -\pi - \theta - \varphi_1^{(2)} - \varphi_2^{(2)} ,
+\]
+which accordingly has to be wrapped into $(-\pi, \pi]$ by adding $2\pi$
+for $\varphi_3 \le -\pi$.
+
+\begin{figure}[tbp]
+  \centering
+  \begin{tikzpicture}[thick, scale=1.2]
+    \coordinate (W) at (0,0);
+    \coordinate (P) at (150:1.6);           % previous link (to elbow)
+    \coordinate (T) at (-60:1.2);           % last link, down and outwards
+    \coordinate (U) at (0,1);
+    \coordinate (Dn) at (0,-1.4);
+    \draw[dashed, thin] (U) -- (Dn);
+    \draw (P) -- (W) -- (T);
+    \fill (W) circle (1.3pt);
+    \node at (T) {$\times$};
+    \pic[draw, thin, "$\Phi$", angle radius=14pt, angle eccentricity=1.7]
+      {angle = T--W--U};
+    \pic[draw, thin, "$\theta$", angle radius=26pt, angle eccentricity=1.3]
+      {angle = Dn--W--T};
+  \end{tikzpicture}
+  \caption{Absolute angle $\Phi$ of the last link, measured from the
+    upward vertical, and the angle of approach $\theta$. Both are drawn
+    unsigned; their signs follow from the handedness of the respective
+    basis.}
+  \label{fig:4r-phi3}
+\end{figure}
+
+Combining the two base configurations with the two solutions of the
+planar problem (elbow up and elbow down), the 4R arm, in the version used
+here, can choose between up to four configurations for a given set of
+constraints, as far as the joint limits allow it.
+
+\subsection{Extension: 5R -- LeRobot style}
+\label{sec:5r}
+
+LeRobot style is basically the 4R arm that was just introduced, but
+additionally the end effector, a gripper, can rotate about the last
+link's axis. The end effector of LeRobot is $\pi$-symmetric.
+
+The local basis $\vect{g}_x$, $\vect{g}_y$, $\vect{g}_z$ at the gripper
+is described by $\vect{g}_z$ aligning with the last link's axis,
+$\vect{g}_y$ being the tangent to the base circle at angle $\varphi_0$,
+and $\vect{g}_x$ being perpendicular to both, with a sign such that for
+$\theta = 0$, $\vect{g}_x$ points in radial direction outwards:
+\[
+  \vect{g}_x = \begin{pmatrix} \cos\theta\cos\varphi_0 \\
+                               \cos\theta\sin\varphi_0 \\
+                               \sin\theta \end{pmatrix} , \qquad
+  \vect{g}_y = \begin{pmatrix} -\sin\varphi_0 \\ \cos\varphi_0 \\ 0 \end{pmatrix} , \qquad
+  \vect{g}_z = \begin{pmatrix} -\sin\theta\cos\varphi_0 \\
+                               -\sin\theta\sin\varphi_0 \\
+                               \cos\theta \end{pmatrix} .
+\]
+For the second configuration, the same formulas if one
+ignores the initial rotation by $\pi$, i.e.\ with $\varphi_0 = \varphi_0^{(2)} - \pi$
+and $\theta$ unchanged. This however does also neglect that 
+we turn the arm upside down after the initial rotation by $\pi$, 
+so the angle $\chi$ computed below has to be
+turned back: $\chi^{(2)} = \chi - \pi$. For the $\pi$-symmetric gripper
+of LeRobot, this correction can be omitted.
+
+Now we can find the line along which the grabbing motion is supposed to
+take place in the new basis. With $\vect{l}$ the direction of the
+grabbing motion, we look for $a$ and $b$ with
+\[
+  a \, \vect{g}_x + b \, \vect{g}_y = \vect{l} .
+\]
+This system is overdetermined, and the input is likely noisy; therefore
+solving it exactly is most likely not possible. Since $\vect{g}_x$ and
+$\vect{g}_y$ are orthonormal, we use
+\[
+  a = \vect{g}_x\T \vect{l} , \qquad
+  b = \vect{g}_y\T \vect{l} ,
+\]
+which is the least-squares solution, i.e.\ the exact solution for the
+projection of $\vect{l}$ onto the $\vect{g}_x$-$\vect{g}_y$-plane. Now we
+can calculate the angle in the $\vect{g}_x$-$\vect{g}_y$-plane:
+\[
+  \chi = \arctan\left(\frac{b}{a}\right) .
+\]
+This is the angle by which we have to rotate the end effector about the
+last link's axis.
+
+\paragraph{Example: grabbing from above along the $x$-axis.}
+With $\theta = 0$ and $\vect{l} = (1, 0, 0)\T$:
+\[
+  \vect{g}_x = \begin{pmatrix} \cos\varphi_0 \\ \sin\varphi_0 \\ 0 \end{pmatrix} ,
+  \qquad
+  \vect{g}_y = \begin{pmatrix} -\sin\varphi_0 \\ \cos\varphi_0 \\ 0 \end{pmatrix} ,
+  \qquad
+  \begin{pmatrix} a \\ b \end{pmatrix}
+  = \begin{pmatrix} \cos\varphi_0 \\ -\sin\varphi_0 \end{pmatrix} ,
+\]
+\[
+  \chi = \arctan\left(\frac{-\sin\varphi_0}{\cos\varphi_0}\right) = -\varphi_0 .
+\]

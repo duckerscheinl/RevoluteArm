@@ -1,0 +1,11 @@
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/test_matrix.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/test_planar.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/test_arm.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/test_forward_consistency.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/test_base_3planar.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/test_base_3planar_roll.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/benchmark_planar.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/benchmark_norm1.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/test.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/edit_cache.dir
+/home/lucas/Projects/Robotics/robot-arm-code/c++/build/CMakeFiles/rebuild_cache.dir

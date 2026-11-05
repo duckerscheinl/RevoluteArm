@@ -1,0 +1,77 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{arens2015}{book}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=cd40bf4770c1007ce4fca15b61875d88}{%
+           family={Arens},
+           familyi={A\bibinitperiod},
+           given={Tilo},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin, Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Springer Spektrum}%
+      }
+      \strng{namehash}{93a0ae2d6e96a19f5b10ff1de42ab3d1}
+      \strng{fullhash}{93a0ae2d6e96a19f5b10ff1de42ab3d1}
+      \strng{bibnamehash}{93a0ae2d6e96a19f5b10ff1de42ab3d1}
+      \strng{authorbibnamehash}{93a0ae2d6e96a19f5b10ff1de42ab3d1}
+      \strng{authornamehash}{93a0ae2d6e96a19f5b10ff1de42ab3d1}
+      \strng{authorfullhash}{93a0ae2d6e96a19f5b10ff1de42ab3d1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{3}
+      \field{title}{Mathematik}
+      \field{year}{2015}
+      \verb{doi}
+      \verb 10.1007/978-3-642-44919-2
+      \endverb
+    \endentry
+    \entry{wiki-curvature}{online}{}
+      \list{organization}{1}{%
+        {Wikipedia}%
+      }
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{title}{Curvature}
+      \field{urlday}{8}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://en.wikipedia.org/wiki/Curvature
+      \endverb
+      \verb{url}
+      \verb https://en.wikipedia.org/wiki/Curvature
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

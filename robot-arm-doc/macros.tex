@@ -1,0 +1,30 @@
+% =====================================================================
+%  macros.tex -- notation
+%  Keep all notation decisions here so they can change in one place.
+% =====================================================================
+
+% --- Number sets -----------------------------------------------------
+\newcommand{\R}{\mathbb{R}}
+
+% --- Linear algebra --------------------------------------------------
+% Matrices are marked with an underline, not boldface.
+\newcommand{\mat}[1]{\underline{#1}}
+% Vectors: decide on a convention (arrow, bold, plain) and fix it here.
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\T}{^{\mathsf{T}}}
+
+% --- Coordinate frames -----------------------------------------------
+% Frame label, e.g. \frm{0} for the base frame.
+\newcommand{\frm}[1]{\{#1\}}
+% Transform from frame #2 into frame #1, written  ^{#1}T_{#2}.
+% (Choose your own convention and adapt this macro accordingly.)
+\newcommand{\tf}[2]{{}^{#1}\mat{T}_{#2}}
+% Rotation from frame #2 into frame #1.
+\newcommand{\rot}[2]{{}^{#1}\mat{R}_{#2}}
+
+% --- Joint variables -------------------------------------------------
+\newcommand{\q}{\vect{q}}          % joint-space configuration
+\newcommand{\qd}{\dot{\vect{q}}}   % joint velocities
+
+% --- Referencing -----------------------------------------------------
+\crefname{equation}{}{}            % use \eqref / \cref as you prefer
