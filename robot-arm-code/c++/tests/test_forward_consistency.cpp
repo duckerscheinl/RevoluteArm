@@ -2,15 +2,15 @@
 // Randomized consistency test: general forward kinematics vs. planar forward kinematics.
 //
 // Special case of the general arm that reproduces the planar 2-link arm:
-//   - two joints, both Twist::Zero and without offset
-//   - link lengths {R1, R2}, built with the (base_height, link_lengths, link_offsets)
-//     constructor, so the shoulder sits at the base height h
+//   - RevoluteArm<T, Plus90, Zero>({0, R1}, {0, 0}): the +90 deg twist turns the first joint
+//     axis horizontal, the upper arm R1 runs along the second link's common normal
+//   - ToolLink<T, Plus90>(0, 0, R2): the forearm R2 along the tool's approach direction
 //
-// Mapping between the two models (both have link direction +z / +y_2D at zero angles):
-//   planar (x2, y2), angles phi1, phi2
-//   general, base angle phi0 = 0:  (x, y, z) = (x2, 0, y2 + h)
-// With a base rotation phi0 the whole planar result is turned about the vertical:
-//   (x, y, z) = (cos(phi0) x2, sin(phi0) x2, y2 + h)
+// Mapping between the two models:
+//   planar (x2, y2) with angles (phi1, phi2), measured from the vertical
+//   general: angles (phi1 + pi/2, phi2 + pi/2), since the DH zero of the first joint is the
+//   horizontal, and the tool's twist turns its approach direction a quarter turn away from
+//   the second link; the result is (x, y, z) = (x2, 0, y2)
 
 #include <algorithm>
 #include <cmath>
@@ -38,7 +38,7 @@ int run(int n_samples, T rel_tol, const char* label)
         const T R1 = T(length(rng)), R2 = T(length(rng));
         const T phi1 = T(angle(rng)), phi2 = T(angle(rng));
         const RevoluteArm<T, Twist::Plus90, Twist::Zero> arm({0,R1}, {0,0});
-        const ToolLink<T, Twist::Plus90> tool(0,R2);
+        const ToolLink<T, Twist::Plus90> tool(0,0,R2);
 
         const auto p = kinematics::planar::forward(R1, phi1, R2, phi2);                  // planar: (1, x2, y2)
         const auto g = kinematics::forward(std::array<T, 2>{phi1+std::numbers::pi_v<T>/2, phi2+std::numbers::pi_v<T>/2}, arm, tool);    // matrix
@@ -47,7 +47,7 @@ int run(int n_samples, T rel_tol, const char* label)
         const T ez = p[2];
 
         const double err = std::max({std::abs(double(g[1,0] - ex)), std::abs(double(g[2,0])),
-                                     std::abs(double(g[3,0] - ez)), std::abs(double(g[0,0] - T(1)))});
+                                     std::abs(double(g[3,0] - ez)), std::abs(double(g[0,0] - T(1)))}) / double(R1+R2);
         max_err = std::max(max_err, err);
         if (!(err <= double(rel_tol))) {
             if (++failures <= 5)

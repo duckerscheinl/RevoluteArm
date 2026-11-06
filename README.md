@@ -2,7 +2,7 @@
 
 Template-heavy C++23 kinematics for robot arms whose joints each have a single
 rotational degree of freedom, with link twists restricted to 0°, +90° or −90°.
-Developed for a small drawing arm driven by an ESP32.
+Personal Use-case: Controll SO-101 follower arm with own code on an ESP32.
 
 > **Status:** work in progress. Interfaces may still change.
 
@@ -40,4 +40,6 @@ Requires a compiler with C++23 support (e.g. GCC 13 or later).
 
 Conventions (frame placement, twist signs, joint zero positions, homogeneous
 coordinates) and the derivations behind the solvers are described in
-[`docs/`](docs/).
+[`robot-arm-doc/`](robot-arm-doc/). The documentation is not finished. It does
+not currently include the transition to DH-frames, which the code already uses.
+The doc still provides derivations of the analytic solvers.

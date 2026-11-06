@@ -138,7 +138,7 @@ constexpr T dot(const Vector<T, length>& u, const Vector<T, length>& v)
 }
 
 template<typename T, std::size_t length>
-T norm2(const Vector<T, length>& vec){
+constexpr T norm2(const Vector<T, length>& vec){
     T norm = 0;
     for (const auto& el : vec){
         norm += el*el;
@@ -148,9 +148,9 @@ T norm2(const Vector<T, length>& vec){
 
 //Technically not a matrix norm
 template<typename T, std::size_t n_rows, std::size_t n_cols>
-T norm_el(const Matrix<T,n_rows,n_cols>& M){
+constexpr T norm_el(const Matrix<T,n_rows,n_cols>& M){
     T norm = 0;
-    for (int i = 0; i < n_rows*n_cols; i++){
+    for (std::size_t i = 0; i < n_rows*n_cols; i++){
         norm += std::abs(M[i]);
     }
     return norm;
@@ -158,7 +158,7 @@ T norm_el(const Matrix<T,n_rows,n_cols>& M){
 
 //Optimized for cache and vectorization.
 template<typename T, std::size_t n_rows, std::size_t n_cols>
-T norm_1(const Matrix<T,n_rows,n_cols>& M){
+constexpr T norm_1(const Matrix<T,n_rows,n_cols>& M){
     std::array<T, n_cols> c_norms{};
     for (std::size_t i = 0; i < n_rows; i++){
         for(std::size_t j = 0; j < n_cols; j++){

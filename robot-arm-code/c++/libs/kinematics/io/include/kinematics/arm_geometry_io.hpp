@@ -2,6 +2,7 @@
 #include <concepts>
 #include <iostream>
 #include "kinematics/arm_geometry.hpp"
+#include "linalg/matrix_io.hpp"
 
 namespace kinematics {
 
@@ -15,16 +16,16 @@ inline std::ostream& operator<<(std::ostream& os, Twist t) {
 }
 
 template<std::floating_point T>
-std::ostream& operator<<(std::ostream& os, const Link<T>& joint){
-    os << "link length: " << joint.link_length() << " link offset: " << joint.link_offset() <<  " twist angle: " << joint.twist_angle() << "\n";
+std::ostream& operator<<(std::ostream& os, const Link<T>& link){
+    os << "offset along rotation axis: " << link.transl_ra() << "offset along common normal: " << link.transl_cn() <<  " twist angle: " << link.twist_angle() << "\n";
     return os;
 }
 
 template<std::floating_point T, Twist... twists>
 std::ostream& operator<<(std::ostream& os, const RevoluteArm<T, twists...>& arm){
-    os << "base height: " << arm.base_height() << "\n";
+    os << "world transform: " << arm.world_trafo() << "\n";
     std::size_t ind = 0;
-    for (const auto& joint : arm.joints()){
+    for (const auto& joint : arm.links()){
         os << "Link " << ind << ": " << joint;
         ind++;
     }

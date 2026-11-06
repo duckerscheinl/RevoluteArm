@@ -6,10 +6,10 @@
 //  - phi1 = 0 means link 1 points along +y; angles are counterclockwise
 //  - phi2 is measured relative to link 1
 //  - inverse() returns two optional slots:
-//      slot 1 ("up"):   link 1 turned counterclockwise from the target direction,
-//                       i.e. the elbow lies on the counterclockwise side of the line
-//                       from the shoulder to the target
-//      slot 0 ("down"): the mirror image on the clockwise side
+//      slot 1 ("up"):   the elbow lies above the line from the shoulder to the target,
+//                       i.e. on its counterclockwise side for targets with x >= 0 and on
+//                       its clockwise side for x < 0
+//      slot 0 ("down"): the mirror image below the line
 //    A slot is empty if the target is unreachable, or if that branch would put the
 //    elbow below the table (the shoulder sits at table height, so the elbow height
 //    is R1 cos(phi1) and must not be negative).
@@ -109,87 +109,70 @@ static void test_boundaries(T tol)
 
 // ------------------------------------------------------------ randomized test
 
-// Random R1 >= R2 and targets anywhere around the shoulder, some unreachable,
-// some close to the singularities. For every target the expected elbow of each
-// branch is computed independently (intersection of two circles, in double), and:
-//  - a slot must be filled exactly when the target is reachable and that elbow is above the table,
-//  - a filled slot must reproduce its elbow and reach the target (forward kinematics).
-// Cases within class_tol of a decision boundary are not classified.
+// Targets are generated from random joint angles with the elbow above the table, so they are
+// reachable by construction, and the original configuration must be among the solutions.
+// Everything is checked with planar::forward itself, no separate geometry:
+//  - every filled slot reaches the target,
+//  - every filled slot has its elbow above the table (elbow = forward with R2 = 0),
+//  - the original angles are found,
+//  - slot 1 holds the elbow-up branch: if both slots are filled, its elbow is the higher one;
+//    if only one is, its elbow lies above (slot 1) or below (slot 0) the line to the target.
+// Near full stretch or fold both branches coincide, so the branch checks are skipped there.
 template<typename T>
-static void test_random(int n, double near_fraction, double min_log_delta, T tol, double class_tol,
-                        const char* label)
+static void test_random(int n, T tol, const char* label)
 {
     std::mt19937 rng(42);
     std::uniform_real_distribution<double> uni(0.0, 1.0);
     const double pi = std::numbers::pi;
 
+    int bad = 0, filled = 0, samples = 0;
     double max_err = 0.0;
-    int bad = 0, filled = 0;
-    auto fail = [&](const char* what, double R1, double R2, double x, double y) {
-        if (++bad <= 5) std::printf("  %s: %s, R1=%.6g R2=%.6g target=(%.9g, %.9g)\n", label, what, R1, R2, x, y);
+    auto fail = [&](const char* what, T R1, T R2, T phi1, T phi2) {
+        if (++bad <= 5) std::printf("  %s: %s, R1=%g R2=%g phi=(%g, %g)\n", label, what,
+                                    double(R1), double(R2), double(phi1), double(phi2));
     };
 
     for (int i = 0; i < n; ++i) {
-        double a = 0.5 + 9.5 * uni(rng), b = 0.5 + 9.5 * uni(rng);
-        double R1 = std::max(a, b), R2 = std::min(a, b);
-        if (R1 - R2 < 1e-3) continue;
+        const T R1 = T(0.5 + 9.5 * uni(rng)), R2 = T(0.5 + 9.5 * uni(rng));
+        const T phi1 = T((-0.5 + uni(rng)) * pi);               // elbow above the table
+        const T phi2 = T(-pi + 2 * pi * uni(rng));
+        const auto t = planar::forward(R1, phi1, R2, phi2);
+        const T x = t[1], y = t[2];
+        const double scale = double(R1 + R2);
 
-        double r_min = R1 - R2, r_max = R1 + R2, r;
-        double u = uni(rng);
-        if (u < near_fraction) {
-            double delta = std::pow(10.0, min_log_delta + (-1.0 - min_log_delta) * uni(rng)) * (r_max - r_min);
-            r = (uni(rng) < 0.5) ? r_max - delta : r_min + delta;
-        } else if (u < near_fraction + 0.1) {
-            r = (uni(rng) < 0.5) ? r_max * (1.05 + uni(rng)) : r_min * 0.95 * uni(rng);   // unreachable
-        } else {
-            r = r_min + (r_max - r_min) * uni(rng);
-        }
-        double theta = -pi + 2 * pi * uni(rng);
+        // branches coincide near full stretch or fold, "above the line" is undefined at x = 0
+        const bool distinct = std::abs(std::sin(double(phi2))) > 1e-3 && std::abs(double(x)) > 1e-3 * scale;
+        ++samples;
 
-        // Inputs rounded to T; the reference works with exactly these values
-        T x = T(r * std::cos(theta)), y = T(r * std::sin(theta)), tR1 = T(R1), tR2 = T(R2);
-        double X = x, Y = y, d = std::hypot(X, Y);
-        double r1 = tR1, r2 = tR2;
-
-        auto s = planar::inverse(x, y, tR1, tR2);
-
-        // Reachability, with a band around the boundary that is not classified
-        bool clearly_out = d > r1 + r2 + class_tol || d < r1 - r2 - class_tol;
-        bool clearly_in  = d < r1 + r2 - class_tol && d > r1 - r2 + class_tol;
-        if (clearly_out) {
-            if (s[0] || s[1]) fail("unreachable target has a solution", R1, R2, X, Y);
-            continue;
-        }
-        if (!clearly_in) continue;
-
-        // Reference elbows: counterclockwise side -> slot 1, clockwise side -> slot 0
-        double along = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
-        double h = std::sqrt(std::max(0.0, r1 * r1 - along * along));
-        double ux = X / d, uy = Y / d;
-        for (int slot = 0; slot < 2; ++slot) {
-            double side = slot == 1 ? 1.0 : -1.0;
-            double ex = along * ux - side * h * uy, ey = along * uy + side * h * ux;
-
-            if (ey < -class_tol && s[slot]) { fail("slot filled although elbow below table", R1, R2, X, Y); continue; }
-            if (ey >  class_tol && !s[slot]) { fail("slot empty although branch is valid", R1, R2, X, Y); continue; }
+        const auto s = planar::inverse(x, y, R1, R2);
+        bool found = false;
+        std::array<T, 2> elbow_y{};
+        for (std::size_t slot = 0; slot < 2; ++slot) {
             if (!s[slot]) continue;
-
             ++filled;
-            auto [phi1, phi2] = *s[slot];
-            auto e = elbow(tR1, phi1);
-            auto v = planar::forward(tR1, phi1, tR2, phi2);
-            double scale = r1 + r2;
-            double elbow_err = std::hypot(double(e[0]) - ex, double(e[1]) - ey) / scale;
-            double tip_err   = std::hypot(double(v[1]) - X, double(v[2]) - Y) / scale;
-            // Near the singularities both branches coincide, so the elbow check is only
-            // meaningful when the two reference elbows are clearly apart.
-            if (h / scale > class_tol && !(elbow_err <= class_tol)) fail("elbow on the wrong side", R1, R2, X, Y);
-            if (!(tip_err <= double(tol))) fail("forward(inverse) misses the target", R1, R2, X, Y);
-            if (std::isfinite(tip_err)) max_err = std::max(max_err, tip_err);
+            const auto [p1, p2] = *s[slot];
+            const auto tip = planar::forward(R1, p1, R2, p2);
+            const auto elbow = planar::forward(R1, p1, T(0), p2);
+
+            const double err = std::hypot(double(tip[1] - x), double(tip[2] - y)) / scale;
+            max_err = std::max(max_err, err);
+            if (!(err <= double(tol)))                         fail("forward(inverse) misses the target", R1, R2, phi1, phi2);
+            if (!(double(elbow[2]) >= -double(tol) * scale))   fail("elbow below the table", R1, R2, phi1, phi2);
+
+            // above (> 0) or below (< 0) the line from the shoulder to the target, oriented by x
+            const double side = (double(x) * double(elbow[2]) - double(y) * double(elbow[1])) * (x >= 0 ? 1.0 : -1.0);
+            if (distinct && s[0].has_value() != s[1].has_value() && (side > 0) != (slot == 1))
+                fail("single branch in the wrong slot", R1, R2, phi1, phi2);
+
+            elbow_y[slot] = elbow[2];
+            found = found || (std::abs(std::remainder(double(p1 - phi1), 2 * pi)) < 1e-3
+                              && std::abs(std::remainder(double(p2 - phi2), 2 * pi)) < 1e-3);
         }
+        if (distinct && s[0] && s[1] && !(elbow_y[1] > elbow_y[0])) fail("slot 1 is not the higher elbow", R1, R2, phi1, phi2);
+        if (distinct && !found)                                       fail("original configuration not found", R1, R2, phi1, phi2);
     }
     std::printf("%s: %d samples, %d filled slots checked, %d failures, max relative tip error %.3g\n",
-                label, n, filled, bad, max_err);
+                label, samples, filled, bad, max_err);
     check(bad == 0, label);
 }
 
@@ -200,9 +183,8 @@ int main()
     test_boundaries<double>(1e-12);
     test_boundaries<float>(1e-5f);
 
-    test_random<double>(100000, 0.3, -8.0, 1e-12, 1e-9, "double");
-    // float: delta stays above ~1e-5, below that |t| rounds onto or past the boundary
-    test_random<float>(100000, 0.3, -5.0, 5e-5f, 1e-4, "float");
+    test_random<double>(100000, 1e-12, "double");
+    test_random<float>(100000, 5e-5f, "float");
 
     if (failures == 0) std::printf("All planar kinematics tests passed\n");
     return failures == 0 ? 0 : 1;

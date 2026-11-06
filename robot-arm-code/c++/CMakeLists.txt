@@ -40,6 +40,8 @@ target_link_options(test_planar PRIVATE -fsanitize=address,undefined)
 
 add_executable(test_arm tests/test_arm.cpp)
 target_link_libraries(test_arm PRIVATE kinematics)
+target_link_libraries(test_arm PRIVATE kinematics_io)
+target_link_libraries(test_arm PRIVATE linalg_io)
 target_compile_options(test_arm PRIVATE -g -fsanitize=address,undefined)
 target_link_options(test_arm PRIVATE -fsanitize=address,undefined)
 
